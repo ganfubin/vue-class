@@ -1,49 +1,13 @@
+import {isType, arrayMethods, augment} from './utils'
+
 export function observe(data) {
   return new Observer(data)
 }
 
-
-var arrayProto = Array.prototype
-var arrayMethods = Object.create(arrayProto)
-
-;[
-  'push',
-  'pop',
-  'shift',
-  'unshift',
-  'splice',
-  'sort',
-  'reverse'
-].forEach(function (item) {
-  Object.defineProperty(arrayMethods, item, {
-    value: function mutator(val) {
-      //缓存原生方法，之后调用
-      console.log(val);
-      var original = arrayProto[item]
-      var args = Array.from(arguments)
-      original.apply(this, args)
-       console.log(this);
-    },
-  })
-})
-
-
-function isType(data) {
-  let type = {
-    '[object String]': 'String',
-    '[object Array]': 'Array',
-    '[object Object]': 'Object',
-    '[object Number]': 'Number',
-    '[object Boolean]': 'Boolean'
-  };
-  return type[Object.prototype.toString.call(data)]
-}
-
-
 class Observer {
   constructor(value) {
     if (isType(value) === 'Array') {
-      augment(value, arrayMethods);
+      augment(value, arrayMethods());
       this.observeArray(value)
     }
 
@@ -89,6 +53,4 @@ function defineObserve(obj, key, val) {
   }
 }
 
-function augment(target, src) {
-  target.__proto__ = src
-}
+
